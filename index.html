@@ -14,7 +14,6 @@
             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.21 3.074.149.198 2.096 3.2 5.077 4.487.709.305 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
         </svg>
     </a>
-
     <!-- Área Cliente -->
     <div id="area-cliente">
         <h1>📅 Escolha seus Produtos e Agende</h1>
@@ -22,12 +21,11 @@
         <!-- Cardápio -->
         <div class="card">
             <h3>🛍️ Nossos Produtos — Clique para adicionar</h3>
-            <p class="texto-ajuda">Selecione quantos produtos quiser e depois finalize seu pedido</p>
+            <p class="texto-ajuda">Selecione quantos produtos quiser e depois envie pelo WhatsApp</p>
             <div id="cardapio-cliente" class="grade-cardapio">
                 <p class="vazio" style="grid-column: 1/-1;">Aguarde o cardápio ser carregado...</p>
             </div>
         </div>
-
         <!-- Produtos Selecionados -->
         <div class="card">
             <h3>✅ Seu Pedido</h3>
@@ -62,16 +60,14 @@
                     <input type="text" id="cli-endereco" placeholder="Rua, Nº, Bairro - Cidade" required>
                 </div>
                 
-                <!-- 3 Botões organizados -->
+                <!-- 2 Botões organizados -->
                 <div class="botoes-acao">
                     <button type="button" class="btn-adicionar" onclick="limparSelecao()">🗑️ Limpar Seleção</button>
                     <button type="button" class="btn-whatsapp-envio" onclick="enviarWhatsApp()">💚 Enviar pelo WhatsApp</button>
-                    <button class="btn-principal" type="submit">✅ Finalizar Agendamento</button>
                 </div>
             </form>
         </div>
     </div>
-
     <!-- Área Administrador -->
     <div id="area-admin" class="oculto">
         <h1>⚙️ Painel Administrativo</h1>
@@ -147,10 +143,8 @@
             </div>
         </div>
     </div>
-
     <!-- Engrenagem -->
     <div class="engrenagem" id="btn-engrenagem">⚙️</div>
-
     <!-- Modal Senha -->
     <div id="modal-senha" class="modal-fundo oculto">
         <div class="modal-conteudo">
@@ -165,7 +159,6 @@
             </div>
         </div>
     </div>
-
     <script>
         // ⚙️ CONFIGURAÇÕES
         const SENHA_ADMIN = "admin123";
@@ -173,7 +166,6 @@
         const CHAVE_CARDAPIO = "cardapio_sistema";
         const NUMERO_WHATSAPP_FIXO = "5531973124354"; // Número fixo para envio
         const DURACAO_ATENDIMENTO = 30;
-
         // ========== ARMAZENAMENTO ==========
         function carregarDados() {
             const dados = localStorage.getItem(CHAVE_DADOS);
@@ -192,10 +184,8 @@
         function gerarId() {
             return Date.now();
         }
-
         // ========== PRODUTOS SELECIONADOS ==========
         let produtosSelecionados = [];
-
         function adicionarProduto(id, nome, preco) {
             const existe = produtosSelecionados.find(p => p.id === id);
             if (!existe) {
@@ -203,18 +193,15 @@
                 atualizarListaSelecionados();
             }
         }
-
         function removerProduto(id) {
             produtosSelecionados = produtosSelecionados.filter(p => p.id !== id);
             atualizarListaSelecionados();
         }
-
         function limparSelecao() {
             if (produtosSelecionados.length > 0 && !confirm('Limpar todos os produtos selecionados?')) return;
             produtosSelecionados = [];
             atualizarListaSelecionados();
         }
-
         function atualizarListaSelecionados() {
             const container = document.getElementById('lista-selecionados');
             if (produtosSelecionados.length === 0) {
@@ -228,7 +215,6 @@
                 </div>
             `).join('');
         }
-
         // ========== MONTAR MENSAGEM ==========
         function montarMensagem() {
             const nome = document.getElementById('cli-nome').value.trim() || 'Não informado';
@@ -255,13 +241,31 @@
             
             return encodeURIComponent(texto);
         }
-
         // ========== ENVIAR WHATSAPP ==========
         function enviarWhatsApp() {
+            // Validação dos campos
+            const nome = document.getElementById('cli-nome').value.trim();
+            const dia = document.getElementById('cli-dia').value;
+            const hora = document.getElementById('cli-hora').value;
+            const telefone = document.getElementById('cli-telefone').value.trim();
+            const endereco = document.getElementById('cli-endereco').value.trim();
+            
+            if (!nome || !dia || !hora || !telefone || !endereco) {
+                alert('⚠️ Preencha todos os campos antes de enviar!');
+                return;
+            }
+            
             const mensagem = montarMensagem();
             window.open(`https://wa.me/${NUMERO_WHATSAPP_FIXO}?text=${mensagem}`, '_blank');
+            
+            // Avisa e limpa o formulário
+            alert('✅ Redirecionando para o WhatsApp...');
+            document.getElementById('form-cliente').reset();
+            produtosSelecionados = [];
+            atualizarListaSelecionados();
+            renderizarCardapioCliente();
+            document.getElementById('aviso-horario-sugestao').classList.add('oculto');
         }
-
         // ========== IMAGEM ==========
         function visualizarFoto(input) {
             if (input.files && input.files[0]) {
@@ -274,7 +278,6 @@
                 leitor.readAsDataURL(input.files[0]);
             }
         }
-
         // ========== DATA E HORÁRIO ==========
         function formatarDataISO(data) {
             const ano = data.getFullYear();
@@ -302,7 +305,6 @@
             }
             return { conflita: false };
         }
-
         // ========== MODAL SENHA ==========
         document.getElementById('btn-engrenagem').addEventListener('click', () => {
             document.getElementById('modal-senha').classList.remove('oculto');
@@ -326,7 +328,6 @@
             document.getElementById('area-cliente').classList.remove('oculto');
             renderizarCardapioCliente();
         }
-
         // ========== ABAS ==========
         document.querySelectorAll('.aba').forEach(aba => {
             aba.addEventListener('click', () => {
@@ -338,7 +339,6 @@
                 if (nomeAba === 'cardapio') renderizarListaCardapio();
             });
         });
-
         // ========== CARDÁPIO — CLIENTE ==========
         function renderizarCardapioCliente() {
             const lista = carregarCardapio();
@@ -372,7 +372,6 @@
                 `;
             }).join('');
         }
-
         // ========== CADASTRAR PRODUTO ==========
         document.getElementById('form-produto').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -384,7 +383,6 @@
                 preco: document.getElementById('produto-preco').value.trim(),
                 fotoBase64: null
             };
-
             const arquivo = document.getElementById('produto-foto').files[0];
             const finalizar = (foto = null) => {
                 if (foto) novo.fotoBase64 = foto;
@@ -397,7 +395,6 @@
                 renderizarListaCardapio();
                 renderizarCardapioCliente();
             };
-
             if (arquivo) {
                 const leitor = new FileReader();
                 leitor.onload = e => finalizar(e.target.result);
@@ -406,7 +403,6 @@
                 finalizar();
             }
         });
-
         // ========== LISTA PRODUTOS — ADMIN ==========
         function renderizarListaCardapio() {
             const lista = carregarCardapio();
@@ -430,14 +426,12 @@
                 </div>
             `).join('');
         }
-
         function excluirProduto(id) {
             if (!confirm('Excluir este produto?')) return;
             salvarCardapio(carregarCardapio().filter(p => p.id !== id));
             renderizarListaCardapio();
             renderizarCardapioCliente();
         }
-
         // ========== VALIDAR HORÁRIO ==========
         document.getElementById('cli-dia').addEventListener('change', verificarHorario);
         document.getElementById('cli-hora').addEventListener('change', verificarHorario);
@@ -459,44 +453,6 @@
                 aviso.classList.remove('oculto');
             }
         }
-
-        // ========== FINALIZAR AGENDAMENTO ==========
-        document.getElementById('form-cliente').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const dia = document.getElementById('cli-dia').value;
-            const hora = document.getElementById('cli-hora').value;
-            
-            if (horarioConflita(carregarDados(), dia, hora).conflita) {
-                alert('⚠️ Este horário já foi agendado! Escolha outro.');
-                return;
-            }
-
-            // Salvar no sistema
-            salvarDados([...carregarDados(), {
-                id: gerarId(),
-                nome: document.getElementById('cli-nome').value,
-                dia,
-                hora,
-                telefone: document.getElementById('cli-telefone').value,
-                endereco: document.getElementById('cli-endereco').value,
-                produtos: [...produtosSelecionados],
-                status: 'atender'
-            }]);
-
-            // Enviar para WhatsApp fixo
-            enviarWhatsApp();
-
-            alert('✅ Agendamento finalizado! Você será direcionado ao WhatsApp.');
-            
-            // Resetar
-            this.reset();
-            produtosSelecionados = [];
-            atualizarListaSelecionados();
-            renderizarCardapioCliente();
-            document.getElementById('aviso-horario-sugestao').classList.add('oculto');
-        });
-
         // ========== LISTA AGENDAMENTOS — ADMIN ==========
         function aplicarFiltros() {
             let lista = carregarDados();
@@ -510,7 +466,6 @@
                 )
                 .sort((a, b) => (a.dia + a.hora).localeCompare(b.dia + b.hora));
         }
-
         function renderizarListaAdmin() {
             const lista = aplicarFiltros();
             const container = document.getElementById('lista-admin');
@@ -546,7 +501,6 @@
                     <td><button class="btn-perigo" onclick="excluirAgendamento(${item.id})">🗑️</button></td>
                 </tr>`).join('') + `</table>`;
         }
-
         function alterarStatus(id, novoStatus) {
             const lista = carregarDados();
             const idx = lista.findIndex(i => i.id === id);
@@ -556,16 +510,13 @@
                 renderizarListaAdmin();
             }
         }
-
         function excluirAgendamento(id) {
             if (!confirm('Excluir este agendamento?')) return;
             salvarDados(carregarDados().filter(i => i.id !== id));
             renderizarListaAdmin();
         }
-
         document.getElementById('filtro-nome').addEventListener('input', renderizarListaAdmin);
         document.getElementById('filtro-status').addEventListener('change', renderizarListaAdmin);
-
         // ========== INICIALIZAÇÃO ==========
         definirDataMinima();
         renderizarCardapioCliente();
