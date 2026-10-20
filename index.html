@@ -21,7 +21,7 @@
         <!-- Cardápio -->
         <div class="card">
             <h3>🛍️ Nossos Produtos — Clique para adicionar</h3>
-            <p class="texto-ajuda">Selecione quantos produtos quiser e depois envie pelo WhatsApp</p>
+            <p class="texto-ajuda">Selecione quantos produtos quiser e depois finalize seu pedido</p>
             <div id="cardapio-cliente" class="grade-cardapio">
                 <p class="vazio" style="grid-column: 1/-1;">Aguarde o cardápio ser carregado...</p>
             </div>
@@ -60,18 +60,15 @@
                     <input type="text" id="cli-endereco" placeholder="Rua, Nº, Bairro - Cidade" required>
                 </div>
                 
-                <!-- 2 Botões organizados -->
-                
-            </form>
-        </div>
-    </div>
-
- <div class="botoes-acao">
+                <!-- 3 Botões organizados DENTRO do formulário -->
+                <div class="botoes-acao">
                     <button type="button" class="btn-adicionar" onclick="limparSelecao()">🗑️ Limpar Seleção</button>
                     <button type="button" class="btn-whatsapp-envio" onclick="enviarWhatsApp()">💚 Enviar pelo WhatsApp</button>
                     <button class="btn-principal" type="submit">✅ Finalizar Agendamento</button>
                 </div>
             </form>
+        </div>
+    </div>
     
     <!-- Área Administrador -->
     <div id="area-admin" class="oculto">
@@ -148,8 +145,10 @@
             </div>
         </div>
     </div>
+    
     <!-- Engrenagem -->
     <div class="engrenagem" id="btn-engrenagem">⚙️</div>
+    
     <!-- Modal Senha -->
     <div id="modal-senha" class="modal-fundo oculto">
         <div class="modal-conteudo">
@@ -164,13 +163,15 @@
             </div>
         </div>
     </div>
+    
     <script>
         // ⚙️ CONFIGURAÇÕES
         const SENHA_ADMIN = "admin123";
         const CHAVE_DADOS = "agendamentos_sistema";
         const CHAVE_CARDAPIO = "cardapio_sistema";
-        const NUMERO_WHATSAPP_FIXO = "5531973124354"; // Número fixo para envio
+        const NUMERO_WHATSAPP_FIXO = "5531973124354";
         const DURACAO_ATENDIMENTO = 30;
+        
         // ========== ARMAZENAMENTO ==========
         function carregarDados() {
             const dados = localStorage.getItem(CHAVE_DADOS);
@@ -189,6 +190,7 @@
         function gerarId() {
             return Date.now();
         }
+        
         // ========== PRODUTOS SELECIONADOS ==========
         let produtosSelecionados = [];
         function adicionarProduto(id, nome, preco) {
@@ -220,7 +222,8 @@
                 </div>
             `).join('');
         }
-        // ========== MONTAR MENSAGEM ==========
+        
+        // ========== MONTAR MENSAGEM WHATSAPP ==========
         function montarMensagem() {
             const nome = document.getElementById('cli-nome').value.trim() || 'Não informado';
             const dia = document.getElementById('cli-dia').value || 'Não informado';
@@ -246,9 +249,9 @@
             
             return encodeURIComponent(texto);
         }
+        
         // ========== ENVIAR WHATSAPP ==========
         function enviarWhatsApp() {
-            // Validação dos campos
             const nome = document.getElementById('cli-nome').value.trim();
             const dia = document.getElementById('cli-dia').value;
             const hora = document.getElementById('cli-hora').value;
@@ -262,15 +265,8 @@
             
             const mensagem = montarMensagem();
             window.open(`https://wa.me/${NUMERO_WHATSAPP_FIXO}?text=${mensagem}`, '_blank');
-            
-            // Avisa e limpa o formulário
-            alert('✅ Redirecionando para o WhatsApp...');
-            document.getElementById('form-cliente').reset();
-            produtosSelecionados = [];
-            atualizarListaSelecionados();
-            renderizarCardapioCliente();
-            document.getElementById('aviso-horario-sugestao').classList.add('oculto');
         }
+        
         // ========== IMAGEM ==========
         function visualizarFoto(input) {
             if (input.files && input.files[0]) {
@@ -283,6 +279,7 @@
                 leitor.readAsDataURL(input.files[0]);
             }
         }
+        
         // ========== DATA E HORÁRIO ==========
         function formatarDataISO(data) {
             const ano = data.getFullYear();
@@ -310,6 +307,7 @@
             }
             return { conflita: false };
         }
+        
         // ========== MODAL SENHA ==========
         document.getElementById('btn-engrenagem').addEventListener('click', () => {
             document.getElementById('modal-senha').classList.remove('oculto');
@@ -333,6 +331,7 @@
             document.getElementById('area-cliente').classList.remove('oculto');
             renderizarCardapioCliente();
         }
+        
         // ========== ABAS ==========
         document.querySelectorAll('.aba').forEach(aba => {
             aba.addEventListener('click', () => {
@@ -344,6 +343,7 @@
                 if (nomeAba === 'cardapio') renderizarListaCardapio();
             });
         });
+        
         // ========== CARDÁPIO — CLIENTE ==========
         function renderizarCardapioCliente() {
             const lista = carregarCardapio();
@@ -377,6 +377,7 @@
                 `;
             }).join('');
         }
+        
         // ========== CADASTRAR PRODUTO ==========
         document.getElementById('form-produto').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -408,6 +409,7 @@
                 finalizar();
             }
         });
+        
         // ========== LISTA PRODUTOS — ADMIN ==========
         function renderizarListaCardapio() {
             const lista = carregarCardapio();
@@ -437,6 +439,7 @@
             renderizarListaCardapio();
             renderizarCardapioCliente();
         }
+        
         // ========== VALIDAR HORÁRIO ==========
         document.getElementById('cli-dia').addEventListener('change', verificarHorario);
         document.getElementById('cli-hora').addEventListener('change', verificarHorario);
@@ -458,6 +461,44 @@
                 aviso.classList.remove('oculto');
             }
         }
+        
+        // ========== FINALIZAR AGENDAMENTO ==========
+        document.getElementById('form-cliente').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const dia = document.getElementById('cli-dia').value;
+            const hora = document.getElementById('cli-hora').value;
+            
+            if (horarioConflita(carregarDados(), dia, hora).conflita) {
+                alert('⚠️ Este horário já foi agendado! Escolha outro.');
+                return;
+            }
+            
+            // Salvar no sistema
+            salvarDados([...carregarDados(), {
+                id: gerarId(),
+                nome: document.getElementById('cli-nome').value,
+                dia,
+                hora,
+                telefone: document.getElementById('cli-telefone').value,
+                endereco: document.getElementById('cli-endereco').value,
+                produtos: [...produtosSelecionados],
+                status: 'atender'
+            }]);
+            
+            // Enviar para WhatsApp
+            enviarWhatsApp();
+            
+            alert('✅ Agendamento finalizado! Você será direcionado ao WhatsApp.');
+            
+            // Resetar formulário
+            this.reset();
+            produtosSelecionados = [];
+            atualizarListaSelecionados();
+            renderizarCardapioCliente();
+            document.getElementById('aviso-horario-sugestao').classList.add('oculto');
+        });
+        
         // ========== LISTA AGENDAMENTOS — ADMIN ==========
         function aplicarFiltros() {
             let lista = carregarDados();
@@ -522,6 +563,7 @@
         }
         document.getElementById('filtro-nome').addEventListener('input', renderizarListaAdmin);
         document.getElementById('filtro-status').addEventListener('change', renderizarListaAdmin);
+        
         // ========== INICIALIZAÇÃO ==========
         definirDataMinima();
         renderizarCardapioCliente();
